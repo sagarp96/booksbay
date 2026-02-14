@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { MdAddPhotoAlternate } from "react-icons/md";
+import type { CSSProperties } from "react";
 
-const thumbsContainer = {
+type PreviewFile = File & { preview: string };
+
+const thumbsContainer: CSSProperties = {
   display: "flex",
   flexDirection: "row",
   flexWrap: "wrap",
   marginTop: 16,
 };
 
-const thumb = {
+const thumb: CSSProperties = {
   display: "inline-flex",
   borderRadius: 2,
   border: "1px solid #eaeaea",
@@ -21,32 +24,33 @@ const thumb = {
   boxSizing: "border-box",
 };
 
-const thumbInner = {
+const thumbInner: CSSProperties = {
   display: "flex",
   minWidth: 0,
   overflow: "hidden",
 };
 
-const img = {
+const img: CSSProperties = {
   display: "block",
   width: "auto",
   height: "100%",
 };
 
-export default function Previews(props) {
-  const [files, setFiles] = useState([]);
+export default function Previews() {
+  const [files, setFiles] = useState<PreviewFile[]>([]);
+
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
     },
-    onDrop: (acceptedFiles) => {
-      setFiles(
-        acceptedFiles.map((file) =>
+    onDrop: (acceptedFiles: File[]) => {
+      const mappedFiles = acceptedFiles.map(
+        (file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          }),
-        ),
+          }) as PreviewFile,
       );
+      setFiles(mappedFiles);
     },
   });
 
@@ -56,7 +60,7 @@ export default function Previews(props) {
         <img
           src={file.preview}
           style={img}
-          // Revoke data uri after image is loaded
+          alt={file.name}
           onLoad={() => {
             URL.revokeObjectURL(file.preview);
           }}
@@ -66,11 +70,13 @@ export default function Previews(props) {
   ));
 
   useEffect(() => {
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+    return () => {
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
+    };
   }, [files]);
 
   return (
-    <section className="container flex flex-col items-center justify-around h-full w-full">
+    <section className="container flex h-full w-full flex-col items-center justify-around">
       <div {...getRootProps({ className: "dropzone" })}>
         <input {...getInputProps()} />
         <p className="text-2xl">Add Images</p>
@@ -82,5 +88,3 @@ export default function Previews(props) {
     </section>
   );
 }
-
-<Previews />;

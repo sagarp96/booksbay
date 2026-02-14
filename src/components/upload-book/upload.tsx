@@ -3,6 +3,8 @@ import { useDropzone } from "react-dropzone";
 import Preview from "./preview";
 import InputLabelDemo from "@/components/shadcn-studio/input/input-02";
 import TextareaAutoGrowDemo from "@/components/shadcn-studio/textarea/textarea-17";
+import { IonButton } from "@ionic/react";
+import { Button } from "../ui/button";
 export default function UploadBook() {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     console.log(acceptedFiles);
@@ -21,6 +23,7 @@ export default function UploadBook() {
           {...getRootProps()}
         >
           <Preview />
+
           {/*<div>
             <input {...getInputProps()} />
             {isDragActive ? (
@@ -32,6 +35,11 @@ export default function UploadBook() {
           {/*<div>
             <MdAddPhotoAlternate className="mx-auto mb-4 text-4xl" />
           </div>*/}
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <Button>Preview</Button>
+          <Button>Upload</Button>
+          <Button>Delete</Button>
         </div>
       </div>
     </>
